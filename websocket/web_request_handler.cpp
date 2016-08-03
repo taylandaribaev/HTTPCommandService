@@ -90,7 +90,7 @@ void request_handler::handle_request(const request& req, reply& rep)
 		return;
 	}
 
-	for (int index = 0; index < root.size(); ++index) 
+	for (unsigned int index = 0; index < root.size(); ++index)
 	{ 
         Json::Value commandObjectValue = root[index];
 		if(commandObjectValue.isObject())
@@ -207,6 +207,9 @@ void request_handler::handle_request(const request& req, reply& rep)
 
 void request_handler::handle_async_response(const request& req, reply& rep)
 {
+	UNUSED(req)
+	UNUSED(rep)
+
 	SessionKey sessionKey;
 	SessionWeak sessionWeak = SessionManager::FindSessionByKey(sessionKey);
 

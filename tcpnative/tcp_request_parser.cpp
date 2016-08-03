@@ -23,6 +23,7 @@ void request_parser::reset()
 
 request_parser::result_type request_parser::parse_json(const std::string& text)
 {
+	(void)text;
 	return bad;
 }
 

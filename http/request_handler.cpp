@@ -222,6 +222,7 @@ void request_handler::handle_request(const request& req, reply& rep)
 
 void request_handler::handle_request_page(const std::string& request_path, const request& req, reply& rep)
 {
+	UNUSED(req)
 	// Determine the file extension.
 	std::size_t last_slash_pos = request_path.find_last_of("/");
 	std::size_t last_dot_pos = request_path.find_last_of(".");

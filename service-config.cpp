@@ -10,7 +10,7 @@
 #include <cstdlib>
 
 #include "service-config.h"
-#include <inih/ini.h>
+#include <ini.h>
 
 using namespace std;
 
@@ -87,8 +87,8 @@ int ServiceConfig::ValueHandler(void* user, const char* section, const char* nam
 
 ServiceConfig& ServiceConfig::Instance()
 {
-	static ServiceConfig serviceConfig("./config.ini");
-	return serviceConfig;
+    static ServiceConfig serviceConfig("./config.ini");
+    return serviceConfig;
 }
 
 } // End http.

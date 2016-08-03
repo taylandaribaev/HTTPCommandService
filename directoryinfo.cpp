@@ -65,6 +65,7 @@ std::vector<FileInfo> DirectoryInfo::GetFiles() const
 
 bool DirectoryInfo :: CreatePath(const std::string& path)
 {
+	UNUSED(path)
 #if 0
     namespace fs = boost::filesystem;
     fs::path dir(path);
@@ -84,6 +85,7 @@ bool DirectoryInfo :: CreatePath(const std::string& path)
 
 bool DirectoryInfo::IsExist(const std::string& directoryPath)
 {
+	UNUSED(directoryPath)
 #if 0
     return boost::filesystem::exists(directoryPath);
 #endif

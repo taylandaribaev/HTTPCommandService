@@ -18,22 +18,28 @@ DEFINES += \
 
 
 DEFINES += CRT_SECURE_NO_WARNINGS
+DEFINES += __COMPILING_HCORE
 
 CONFIG += c++11
 
+CONFIG(debug, debug|release){
+	DESTDIR = ../../bin/debug
+}else{
+	DESTDIR = ../../bin/release
+}
+
 win32 {
-
     mingw {
+		message("mingw")
         #QMAKE_CXXFLAGS = -fPIC
-
         INCLUDEPATH += /usr/include
         LIBS += -L/usr/lib
 
         # Boost
-        BOOSTDIR = $(EXTERNALDIR)/boost_1_54_0
+		BOOSTDIR = $(EXTERNALDIR)/boost_1_59_0
         INCLUDEPATH += $${BOOSTDIR}
-    } else {
 
+    } else {
         DEFINES += \
             CRT_SECURE_NO_WARNINGS \
             _WIN32_WINDOWS \
@@ -43,10 +49,10 @@ win32 {
             JSONDIR = $(EXTERNALDIR)/jsoncpp-src-0.5.0
             INCLUDEPATH += $${JSONDIR}/include
 
-            debug {
-                LIBS += -L$${JSONDIR}/lib/debug
+			CONFIG(debug, debug|release){
+				LIBS += -L$${JSONDIR}/lib/v120/debug
             } else {
-                LIBS += -L$${JSONDIR}/lib/release
+				LIBS += -L$${JSONDIR}/lib/v120/release
             }
         }
 
@@ -68,7 +74,6 @@ unix {
     INCLUDEPATH += ./
 
     INCLUDEPATH += /usr/include/jsoncpp
-    INCLUDEPATH += /usr/include/inih
 }
 
 win32 {
@@ -76,11 +81,9 @@ win32 {
         BOOST_VER = 1_54
         COMPILER_SHORT = mgw48
 
-        debug {
+		CONFIG(debug, debug|release){
             BOOST_SUFFIX = $${COMPILER_SHORT}-sd-$${BOOST_VER}
-        }
-
-        release {
+		} else{
             BOOST_SUFFIX = $${COMPILER_SHORT}-s-$${BOOST_VER}
         }
 
@@ -88,11 +91,9 @@ win32 {
 
         LIBS += -lboost_system-$${BOOST_SUFFIX} -lboost_filesystem-$${BOOST_SUFFIX}
 
-        debug {
+		CONFIG(debug, debug|release){
         LIBS += -lboost_thread-mgw48-mt-sd-1_54
-        }
-
-        release {
+		} else {
         LIBS += -lboost_thread-mgw48-mt-s-1_54
         }
     } else {
@@ -109,7 +110,27 @@ unix {
     LIBS += -lboost_system -lboost_filesystem -lboost_thread -lboost_serialization
     LIBS += -lpthread
     #LIBS += -lssl -lcrypto
-    LIBS += -linih
+}
+
+contains(DEFINES, WITH_INICONFIG) {
+	win32{
+		mingw {
+			INIHDIR = $(EXTERNALDIR)/inih
+			INCLUDEPATH += $${INIHDIR}
+		}else{
+			INIHDIR = $(EXTERNALDIR)/inih
+			INCLUDEPATH += $${INIHDIR}
+			CONFIG(debug, debug|release){
+				LIBS += -L$${INIHDIR}/debug
+			} else {
+				LIBS += -L$${INIHDIR}/release
+			}
+		}
+	}
+	unix{
+		INCLUDEPATH += /usr/include/inih
+	}
+	LIBS += -linih
 }
 
 contains(DEFINES, WITH_JSONCPP) {
@@ -117,7 +138,7 @@ contains(DEFINES, WITH_JSONCPP) {
         mingw {
             LIBS += -ljsoncpp
         } else {
-            LIBS += -ljsoncpp_mt
+            LIBS += -ljsoncpp
         }
     } else {
         LIBS += -ljsoncpp
@@ -158,8 +179,7 @@ HEADERS += \
     tcpnative/tcp_connection_manager.hpp \
     tcpnative/tcp_reply.hpp \
     tcpnative/tcp_request.hpp \
-    tcpnative/tcp_reques \
-    t_handler.hpp \
+	tcpnative/tcp_request_handler.hpp \
     tcpnative/tcp_request_parser.hpp \
     tcpnative/tcp_server.hpp \
     http/connection.hpp \
@@ -214,81 +234,81 @@ SOURCES += \
     serverstats.cpp
 
 
-win32 {
-    mingw {
-        BOOST_VER = 1_54
-        COMPILER_SHORT = mgw48
+#win32 {
+#    mingw {
+#        BOOST_VER = 1_54
+#        COMPILER_SHORT = mgw48
 
-        debug {
-            BOOST_SUFFIX = $${COMPILER_SHORT}-sd-$${BOOST_VER}
-        }
+#        debug {
+#            BOOST_SUFFIX = $${COMPILER_SHORT}-sd-$${BOOST_VER}
+#        }
 
-        release {
-            BOOST_SUFFIX = $${COMPILER_SHORT}-s-$${BOOST_VER}
-        }
+#        release {
+#            BOOST_SUFFIX = $${COMPILER_SHORT}-s-$${BOOST_VER}
+#        }
 
-        LIBS += -L$(EXTERNALDIR)/boost_1_54_0/stage/lib
+#        LIBS += -L$(EXTERNALDIR)/boost_1_54_0/stage/lib
 
-        LIBS += -lboost_system-$${BOOST_SUFFIX} -lboost_filesystem-$${BOOST_SUFFIX}
+#        LIBS += -lboost_system-$${BOOST_SUFFIX} -lboost_filesystem-$${BOOST_SUFFIX}
 
-        debug {
-        LIBS += -lboost_thread-mgw48-mt-sd-1_54
-        }
+#        debug {
+#        LIBS += -lboost_thread-mgw48-mt-sd-1_54
+#        }
 
-        release {
-        LIBS += -lboost_thread-mgw48-mt-s-1_54
-        }
-    } else {
-    }
+#        release {
+#        LIBS += -lboost_thread-mgw48-mt-s-1_54
+#        }
+#    } else {
+#    }
 
-    LIBS += -lws2_32 -lmswsock
+#    LIBS += -lws2_32 -lmswsock
 
-}
+#}
 
-unix {
-    LIBS += -L/opt/local/lib
-    LIBS += -L/usr/local/lib
-    LIBS += -Wl,-rpath=/usr/local/lib
-    LIBS += -lboost_system -lboost_filesystem -lboost_thread -lboost_serialization
-    LIBS += -lpthread -ldl
-    #LIBS += -lssl -lcrypto
-}
+#unix {
+#    LIBS += -L/opt/local/lib
+#    LIBS += -L/usr/local/lib
+#    LIBS += -Wl,-rpath=/usr/local/lib
+#    LIBS += -lboost_system -lboost_filesystem -lboost_thread -lboost_serialization
+#    LIBS += -lpthread -ldl
+#    #LIBS += -lssl -lcrypto
+#}
 
-contains(DEFINES, WITH_JSONCPP) {
-    win32 {
-        mingw {
-            LIBS += -ljsoncpp
-        } else {
-            LIBS += -ljsoncpp_mt
-        }
-    } else {
-        LIBS += -ljsoncpp
-    }
-}
+#contains(DEFINES, WITH_JSONCPP) {
+#    win32 {
+#        mingw {
+#            LIBS += -ljsoncpp
+#        } else {
+#            LIBS += -ljsoncpp_mt
+#        }
+#    } else {
+#        LIBS += -ljsoncpp
+#    }
+#}
 
-contains(DEFINES, WITH_TINYXML2) {
-    LIBS += -tinyxml2
-}
+#contains(DEFINES, WITH_TINYXML2) {
+#    LIBS += -tinyxml2
+#}
 
 
 # Install.
-win32{
-    INSTALL_PREFIX = /usr/include/$$TARGET
-    INSTALL_HEADERS = $$HEADERS
+#win32{
+#    INSTALL_PREFIX = /usr/include/$$TARGET
+#    INSTALL_HEADERS = $$HEADERS
 
-    for(header, INSTALL_HEADERS) {
-        path = $${INSTALL_PREFIX}/$${dirname(header)}
-        eval(headers_$${path}.files += $$header)
-        eval(headers_$${path}.path = $$path)
-        eval(INSTALLS *= headers_$${path})
-    }
-    #target_headers.files  = $$HEADERS
-    #target_headers.path = /usr/include/$$TARGET
-    #INSTALLS += target_headers
+#    for(header, INSTALL_HEADERS) {
+#        path = $${INSTALL_PREFIX}/$${dirname(header)}
+#        eval(headers_$${path}.files += $$header)
+#        eval(headers_$${path}.path = $$path)
+#        eval(INSTALLS *= headers_$${path})
+#    }
+#    #target_headers.files  = $$HEADERS
+#    #target_headers.path = /usr/include/$$TARGET
+#    #INSTALLS += target_headers
 
-    target.path = /usr/lib/
-    INSTALLS += target
-}
+#    target.path = /usr/lib/
+#    INSTALLS += target
+#}
 
 
 unix{

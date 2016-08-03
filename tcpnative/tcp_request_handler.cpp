@@ -46,6 +46,7 @@ request_handler::request_handler(const string& doc_root)
 
 void request_handler::handle_request(const request& req, reply& rep)
 {
+	UNUSED(rep)
 	const string& controllerName = req.controller;
 	const string& method = req.method;
 	const map<string, string> argumentsMap = req.arguments;

@@ -32,7 +32,7 @@ public:
 
     /// Handle a request and produce a reply.
     void handle_request(const request& req, reply& rep);
-	void handle_request_page(const std::string& request_path, const request& req, reply& rep);
+    void handle_request_page(const std::string& request_path, const request& req, reply& rep);
 
 private:
     /// The directory containing the files to be served.

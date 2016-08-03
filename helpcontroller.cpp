@@ -71,8 +71,8 @@ void HelpController::ShowControllers(SessionWeak session, const ControllerArgume
 
 void HelpController::ShowControllersText(SessionWeak session, const ControllerArguments& arguments, ControllerOutput& outContent)
 {
-    //UNUSED(sessionId)
-    //UNUSED(arguments)
+	UNUSED(session)
+	UNUSED(arguments)
 
     outContent.append("Controllers:\n\n");
 

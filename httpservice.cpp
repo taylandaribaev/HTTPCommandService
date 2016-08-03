@@ -1,6 +1,6 @@
 #include "httpservice.h"
 #include <thread>
-
+#include <iostream>
 
 #ifndef _MSC_VER
 // save diagnostic state
@@ -128,6 +128,7 @@ bool HttpService::Stop()
 
 bool HttpService::Join(float time)
 {
+	UNUSED(time)
 	for(auto& thread : _threads)
 	{
 		thread->join();

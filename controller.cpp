@@ -59,12 +59,14 @@ void IController::RegisterMethod(ControllerMethodRef method)
 
 void IController::BindCurrentMethod(ControllerMethodRef method)
 {
+	UNUSED(method)
     //assert(_currentMethod == nullptr);
     //_currentMethod = method;
 }
 
 void IController::UnBindCurrentMethod(ControllerMethodRef method)
 {
+	UNUSED(method)
     //assert(_currentMethod == method);
     //_currentMethod = nullptr;
 }
